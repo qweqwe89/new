@@ -1,0 +1,158 @@
+Warning: Using a password on the command line interface can be insecure.
+--------------
+SELECT lastname FROM patient
+--------------
+
++----------+
+| lastname |
++----------+
+| Zhu      |
++----------+
+1 row in set (0.01 sec)
+
+--------------
+SELECT DISTINCT lastname FROM patient
+--------------
+
++----------+
+| lastname |
++----------+
+| Zhu      |
++----------+
+1 row in set (0.00 sec)
+
+--------------
+SELECT * FROM doctor GROUP BY lastname
+--------------
+
++-----------+---------------+---------------+--------------------+--------------+--------------+
+| firstname | lastname      | licensenumber | datebecamelicensed | specialty    | hospitalcode |
++-----------+---------------+---------------+--------------------+--------------+--------------+
+| Colleen   | Aziz          | SE66          | 1989-08-24         | Surgeon      | ABC          |
+| Ross      | Clooney       | HT45          | 1987-06-20         | Surgeon      | DDE          |
+| Bernie    | DoKavorikiang | RD34          | 1980-09-09         | Urologist    | BBC          |
+| Joey      | Shabado       | GD56          | 1960-06-24         | Podiatrist   | BBC          |
+| Ben       | Spock         | YT67          | 1955-02-20         | Pediatrician | DDE          |
+| Mandy     | Webster       | JK78          | 1990-08-08         | Surgeon      | BBC          |
+| Bubble    | White         | CL07          | 1943-09-06         | Surgeon      | ABC          |
++-----------+---------------+---------------+--------------------+--------------+--------------+
+7 rows in set (0.00 sec)
+
+--------------
+SELECT hospitalname, hospitalcode FROM hospital WHERE numberofbeds > 1500
+--------------
+
++--------------+--------------+
+| hospitalname | hospitalcode |
++--------------+--------------+
+| Victoria     | ABC          |
++--------------+--------------+
+1 row in set (0.00 sec)
+
+--------------
+SELECT firstname, lastname FROM doctor WHERE hospitalcode = (SELECT hospitalcode FROM hospital WHERE hospitalname = "St. Joseph")
+--------------
+
++-----------+---------------+
+| firstname | lastname      |
++-----------+---------------+
+| Joey      | Shabado       |
+| Mandy     | Webster       |
+| Bernie    | DoKavorikiang |
++-----------+---------------+
+3 rows in set (0.00 sec)
+
+--------------
+SELECT firstname, lastname FROM patient WHERE LEFT(lastname,1) = "G"
+--------------
+
+Empty set (0.00 sec)
+
+--------------
+SELECT firstname, lastname FROM patient WHERE ohip IN (SELECT ohip FROM treat WHERE doctor IN (SELECT licensenumber FROM doctor WHERE lastname = "Clooney"))
+--------------
+
++-----------+----------+
+| firstname | lastname |
++-----------+----------+
+| Kaihang   | Zhu      |
++-----------+----------+
+1 row in set (0.00 sec)
+
+--------------
+SELECT hospitalname, city, doctor.lastname FROM hospital INNER JOIN doctor WHERE hospital.headnumber = doctor.licensenumber
+--------------
+
++--------------+----------+----------+
+| hospitalname | city     | lastname |
++--------------+----------+----------+
+| Victoria     | London   | Aziz     |
+| St. Joseph   | London   | Shabado  |
+| Victoria     | Victoria | Spock    |
++--------------+----------+----------+
+3 rows in set (0.00 sec)
+
+--------------
+SELECT SUM(numberofbeds) AS "Total Number of Beds" FROM hospital
+--------------
+
++----------------------+
+| Total Number of Beds |
++----------------------+
+|                 3800 |
++----------------------+
+1 row in set (0.00 sec)
+
+ERROR 1064 (42000) at line 22: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '    ON patient.ohip = treat.patient
+INNER JOIN hospital
+    ON hos' at line 7
+--------------
+SELECT
+    patient.firstname,
+    doctor.firstname
+FROM
+    patient
+INNER JOIN treat 
+    ON patient.ohip = treat.patient
+INNER JOIN hospital
+    ON hospital.headnumber = treat.doctor
+INNER JOIN doctor
+    ON hospital.headnumber = doctor.licensenumber
+--------------
+
+--------------
+SELECT firstname, lastname FROM doctor WHERE specialty = 'Surgeon' AND hospitalcode IN (SELECT hospitalcode FROM hospital WHERE hospitalname = "Victoria")
+--------------
+
++-----------+----------+
+| firstname | lastname |
++-----------+----------+
+| Bubble    | White    |
+| Ross      | Clooney  |
+| Colleen   | Aziz     |
++-----------+----------+
+3 rows in set (0.00 sec)
+
+--------------
+SELECT firstname FROM doctor WHERE licensenumber NOT IN (SELECT doctor FROM treat)
+--------------
+
++-----------+
+| firstname |
++-----------+
+| Bubble    |
+| Joey      |
+| Mandy     |
+| Bernie    |
+| Colleen   |
+| Ben       |
++-----------+
+6 rows in set (0.00 sec)
+
+--------------
+SELECT lastname, firstname FROM doctor WHERE licensenumber IN (SELECT doctor FROM treat GROUP BY doctor HAVING COUNT(*) > 1)
+--------------
+
+Empty set (0.00 sec)
+
+Bye

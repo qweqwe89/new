@@ -1,0 +1,28 @@
+USE kzhu48assign2db;
+
+-- query1
+DELETE FROM doctor WHERE datebecamelicensed < '1965-01-01';
+-- have error because the doctor has a forigen key and the key is used by other table
+
+-- query2
+CREATE VIEW v AS SELECT DISTINCT patient.firstname AS "Patient's firstname", patient.lastname AS "Patient's lastname", doctor.lastname AS "Doctor's lastname", hospital.hospitalname AS "Hospital" FROM treat INNER JOIN patient ON patient.ohip = treat.patient INNER JOIN doctor ON treat.doctor = doctor.licensenumber INNER JOIN hospital ON hospital.hospitalcode = doctor.hospitalcode WHERE hospital.datestartedathead > '1995-12-31' AND treat.doctor IN (SELECT headnumber FROM hospital);
+
+-- query3
+SELECT * FROM v;
+
+-- query4
+SELECT * FROM doctor;
+SELECT * FROM treat;
+
+-- query5
+SELECT * FROM doctor;
+
+-- query6
+DELETE FROM doctor WHERE lastname = "Clooney";
+
+-- query7
+SELECT * FROM doctor;
+
+-- query8
+DELETE FROM doctor WHERE specialty = "Surgeon";
+--  the delete command did not delete the rows because the doctor has a forigen key and the key is used by other table

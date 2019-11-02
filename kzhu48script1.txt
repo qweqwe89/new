@@ -1,0 +1,58 @@
+-- create a script file
+SHOW databases;
+DROP DATABASE IF EXISTS kzhu48assign2db;
+CREATE DATABASE kzhu48assign2db;
+USE kzhu48assign2db;
+
+-- these lines to make sure t.a. can access
+GRANT USAGE ON *.* TO 'ta'@'localhost';
+DROP USER 'ta'@'localhost';
+CREATE USER 'ta'@'localhost' IDENTIFIED BY 'cs3319';
+GRANT ALL PRIVILEGES ON kzhu48assign2db.* TO 'ta'@'localhost';
+FLUSH PRIVILEGES;
+
+-- show the null table
+SHOW TABLES;
+
+-- create table for doctor
+CREATE TABLE doctor (
+    firstname VARCHAR(20), 
+    lastname VARCHAR(20), 
+    licensenumber char(4) NOT NULL,
+    datebecamelicensed DATE, 
+    specialty VARCHAR(30), 
+    hospitalcode char(3),
+    PRIMARY KEY (licensenumber));
+
+-- create table for hospital
+CREATE TABLE hospital (
+    hospitalname VARCHAR(20), 
+    city VARCHAR(20), 
+    province CHAR(2), 
+    numberofbeds INT, 
+    datestartedathead DATE, 
+    hospitalcode char(3) NOT NULL, 
+    headnumber char(4),
+    PRIMARY KEY (hospitalcode),
+    FOREIGN KEY (headnumber) REFERENCES doctor(licensenumber));
+
+-- create table for patient
+CREATE TABLE patient (
+    ohip INT NOT NULL,
+    firstname VARCHAR(20), 
+    lastname VARCHAR(20), 
+    PRIMARY KEY (ohip));
+
+-- create table for treat
+CREATE TABLE treat (
+    patient INT NOT NULL, 
+    doctor char(4) NOT NULL, 
+    PRIMARY KEY (patient, doctor),
+    FOREIGN KEY (patient) REFERENCES patient(ohip),
+    FOREIGN KEY (doctor) REFERENCES doctor(licensenumber) ON DELETE CASCADE);
+
+-- add foreign key in doctor to associate with hospital using hospital code
+ALTER TABLE doctor ADD FOREIGN KEY (hospitalcode) REFERENCES hospital(hospitalcode);
+
+-- show the final table
+SHOW TABLES;

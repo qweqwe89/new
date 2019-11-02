@@ -1,0 +1,38 @@
+-- show datas
+USE kzhu48assign2db;
+-- query 1
+SELECT lastname FROM patient;
+-- query 2
+SELECT DISTINCT lastname FROM patient;
+-- query 3
+SELECT * FROM doctor GROUP BY lastname;
+-- query4
+SELECT hospitalname, hospitalcode FROM hospital WHERE numberofbeds > 1500;
+-- query5
+SELECT firstname, lastname FROM doctor WHERE hospitalcode = (SELECT hospitalcode FROM hospital WHERE hospitalname = "St. Joseph");
+-- query6
+SELECT firstname, lastname FROM patient WHERE LEFT(lastname,1) = "G";
+-- query 7
+SELECT firstname, lastname FROM patient WHERE ohip IN (SELECT ohip FROM treat WHERE doctor IN (SELECT licensenumber FROM doctor WHERE lastname = "Clooney"));
+-- query 8
+SELECT hospitalname, city, doctor.lastname FROM hospital INNER JOIN doctor WHERE hospital.headnumber = doctor.licensenumber;
+-- query 9
+SELECT SUM(numberofbeds) AS "Total Number of Beds" FROM hospital;
+-- query10
+SELECT
+    patient.firstname,
+    doctor.firstname
+FROM
+    patient
+INNER JOIN treat 
+    ON patient.ohip = treat.patient
+INNER JOIN hospital
+    ON hospital.headnumber = treat.doctor
+INNER JOIN doctor
+    ON hospital.headnumber = doctor.licensenumber;
+-- querty11
+SELECT firstname, lastname FROM doctor WHERE specialty = 'Surgeon' AND hospitalcode IN (SELECT hospitalcode FROM hospital WHERE hospitalname = "Victoria");
+-- query 12
+SELECT firstname FROM doctor WHERE licensenumber NOT IN (SELECT doctor FROM treat);
+-- query 13
+SELECT lastname, firstname FROM doctor WHERE licensenumber IN (SELECT doctor FROM treat GROUP BY doctor HAVING COUNT(*) > 1);

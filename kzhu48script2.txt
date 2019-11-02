@@ -1,0 +1,61 @@
+USE kzhu48assign2db;
+
+-- set patient table
+SELECT * FROM patient;
+LOAD DATA LOCAL INFILE 'loaddatafall2019.txt' INTO TABLE patient FIELDS TERMINATED BY "," LINES TERMINATED BY '\n';
+INSERT INTO patient (ohip, firstname, lastname) VALUES (111111111, "Kaihang", "Zhu");
+SELECT * FROM patient;
+
+-- set doctor table
+SELECT * FROM doctor;
+INSERT INTO doctor (firstname, lastname, licensenumber, datebecamelicensed, specialty) VALUES ("Bernie", "DoKavorikiang", "RD34", "1980-09-09", "Urologist");
+INSERT INTO doctor (firstname, lastname, licensenumber, datebecamelicensed, specialty) VALUES ("Joey", "Shabado", "GD56", "1960-06-24", "Podiatrist");
+INSERT INTO doctor (firstname, lastname, licensenumber, datebecamelicensed, specialty) VALUES ("Ross", "Clooney", "HT45", "1987-06-20", "Surgeon");
+INSERT INTO doctor (firstname, lastname, licensenumber, datebecamelicensed, specialty) VALUES ("Ben", "Spock", "YT67", "1955-02-20", "Pediatrician");
+INSERT INTO doctor (firstname, lastname, licensenumber, datebecamelicensed, specialty) VALUES ("Mandy", "Webster", "JK78", "1990-08-08", "Surgeon");
+INSERT INTO doctor (firstname, lastname, licensenumber, datebecamelicensed, specialty) VALUES ("Colleen", "Aziz", "SE66", "1989-08-24", "Surgeon");
+INSERT INTO doctor (firstname, lastname, licensenumber, datebecamelicensed, specialty) VALUES ("Bubble", "White", "CL07", "1943-09-06", "Surgeon");
+SELECT * FROM doctor;
+
+
+-- set hospital table
+SELECT * FROM hospital;
+INSERT INTO hospital (hospitalcode, hospitalname, city, province, numberofbeds, headnumber, datestartedathead) VALUES ("BBC", "St. Joseph", "London", "On", "1000", "GD56", "1999-09-10");
+INSERT INTO hospital (hospitalcode, hospitalname, city, province, numberofbeds, headnumber, datestartedathead) VALUES ("ABC", "Victoria", "London", "On", "1600", "SE66", "1994-12-05");
+INSERT INTO hospital (hospitalcode, hospitalname, city, province, numberofbeds, headnumber, datestartedathead) VALUES ("DDE", "Victoria", "Victoria", "BC", "1200", "YT67", "1995-02-20");
+SELECT * FROM hospital;
+
+-- set treat table
+SELECT * FROM treat;
+INSERT INTO treat (patient, doctor) VALUES (110112113, "GD56");
+INSERT INTO treat (patient, doctor) VALUES (444555666, "HT45");
+INSERT INTO treat (patient, doctor) VALUES (444555666, "JK78");
+INSERT INTO treat (patient, doctor) VALUES (111222333, "SE66");
+INSERT INTO treat (patient, doctor) VALUES (111222333, "YT67");
+INSERT INTO treat (patient, doctor) VALUES (111222333, "JK78");
+INSERT INTO treat (patient, doctor) VALUES (333444555, "GD56");
+INSERT INTO treat (patient, doctor) VALUES (667766777, "YT67");
+INSERT INTO treat (patient, doctor) VALUES (667766777, "JK78");
+INSERT INTO treat (patient, doctor) VALUES (667766777, "GD56");
+INSERT INTO treat (patient, doctor) VALUES (111222111, "YT67");
+INSERT INTO treat (patient, doctor) VALUES (111111111, "YT67");
+SELECT * FROM treat;
+
+-- set working hospital to doctor
+SELECT * FROM doctor;
+UPDATE doctor SET hospitalcode = "BBC" WHERE licensenumber = "RD34";
+UPDATE doctor SET hospitalcode = "BBC" WHERE licensenumber = "GD56";
+UPDATE doctor SET hospitalcode = "DDE" WHERE licensenumber = "HT45";
+UPDATE doctor SET hospitalcode = "DDE" WHERE licensenumber = "YT67";
+UPDATE doctor SET hospitalcode = "BBC" WHERE licensenumber = "JK78";
+UPDATE doctor SET hospitalcode = "ABC" WHERE licensenumber = "SE66";
+UPDATE doctor SET hospitalcode = "ABC" WHERE licensenumber = "CL07";
+SELECT * FROM doctor;
+
+-- set ohip 111222111's last name to Brown
+SELECT * FROM patient;
+UPDATE patient SET lastname = "Brown" WHERE ohip = 111222111;
+SELECT * FROM patient;
+
+-- set treating doctor Spock to Clooney
+UPDATE treat SET doctor = (SELECT licensenumber FROM doctor WHERE lastname = "Clooney") WHERE doctor = (SELECT licensenumber FROM doctor WHERE lastname = "Spock");
